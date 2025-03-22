@@ -3,27 +3,32 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card } from "@/components/ui/card"
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+interface User {
+  user: {
+    name: string;
+    email: string;
+  };
+}
 
 export default function AccountSettings() {
-
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
-  useEffect(()=>{
-    console.log("user :",user?.user)
-  },[user])
+  useEffect(() => {
+    console.log("user:", user?.user);
+  }, [user]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(JSON.parse(storedUser) as User); // Explicitly cast to User
     } else {
-      router.push("/signin"); 
+      router.push("/signin");
     }
   }, [router]);
+
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-sm border-gray-200 shadow-sm">
@@ -32,8 +37,8 @@ export default function AccountSettings() {
 
           <div className="flex flex-col items-center space-y-2">
             <Avatar className="w-16 h-16">
-              <AvatarImage src="/placeholder.svg" alt={`${user?.user?.name}`} />
-              <AvatarFallback>MD</AvatarFallback>
+              <AvatarImage src="/placeholder.svg" alt={user?.user?.name || "User"} />
+              <AvatarFallback>{user?.user?.name?.charAt(0) ?? "U"}</AvatarFallback>
             </Avatar>
 
             <div className="text-center">
@@ -51,6 +56,5 @@ export default function AccountSettings() {
         </div>
       </Card>
     </div>
-  )
+  );
 }
-
